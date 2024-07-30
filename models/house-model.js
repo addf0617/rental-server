@@ -42,15 +42,9 @@ const houseSchema = new Schema({
     },
     required: true,
   },
-  //這一部分驗證待測試
   image: {
-    type: [Buffer],
-    validate: {
-      validator: function (val) {
-        return val.length <= 5;
-      },
-      message: "最多五張圖片",
-    },
+    type: Buffer,
+    required: true,
   },
   landlord: {
     type: mongoose.Types.ObjectId,
