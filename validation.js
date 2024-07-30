@@ -36,11 +36,19 @@ const houseValidation = (data) => {
     District: Joi.string()
       .valid("北區", "中區", "南區", "東區")
       .label("District"),
-    img: Joi.array().items(Joi.string()).label("Image"),
+    image: Joi.required().label("Image"),
   });
   return Schema.validate(data);
+};
+
+const isValidObejctId = (id) => {
+  if (ObjectId.isValid(id)) {
+    return String(new ObjectId(id)) === id;
+  }
+  return false;
 };
 
 module.exports.registerValidation = registerValidation;
 module.exports.loginValidation = loginValidation;
 module.exports.houseValidation = houseValidation;
+module.exports.isValidObejctId = isValidObejctId;

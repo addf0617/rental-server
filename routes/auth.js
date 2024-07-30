@@ -6,11 +6,6 @@ const appError = require("../utils/appError");
 const registerValidation = require("../validation").registerValidation;
 const loginValidation = require("../validation").loginValidation;
 
-router.use((req, res, next) => {
-  console.log("進入auth route");
-  next();
-});
-
 router.get("/", (req, res) => {
   return res.send("test");
 });
