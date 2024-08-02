@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const ObjectId = require("mongoose").Types.ObjectId;
 
 const registerValidation = (data) => {
   const Schema = Joi.object({
@@ -41,7 +42,7 @@ const houseValidation = (data) => {
   return Schema.validate(data);
 };
 
-const isValidObejctId = (id) => {
+const isValidObjectId = (id) => {
   if (ObjectId.isValid(id)) {
     return String(new ObjectId(id)) === id;
   }
@@ -51,4 +52,4 @@ const isValidObejctId = (id) => {
 module.exports.registerValidation = registerValidation;
 module.exports.loginValidation = loginValidation;
 module.exports.houseValidation = houseValidation;
-module.exports.isValidObejctId = isValidObejctId;
+module.exports.isValidObjectId = isValidObjectId;
