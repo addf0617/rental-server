@@ -6,10 +6,6 @@ const appError = require("../utils/appError");
 const registerValidation = require("../validation").registerValidation;
 const loginValidation = require("../validation").loginValidation;
 
-router.get("/", (req, res) => {
-  return res.send("test");
-});
-
 //註冊route
 router.post("/register", async (req, res, next) => {
   let userData = req.body;
@@ -50,10 +46,7 @@ router.post("/login", async (req, res, next) => {
           return res.send({
             message: "登入成功",
             token: "bearer " + token,
-            user: {
-              username: foundUser.username,
-              email: foundUser.email,
-            },
+            user: foundUser,
           });
         });
       }

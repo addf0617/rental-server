@@ -9,7 +9,6 @@ const multer = require("multer");
 const upload = multer({
   limits: { files: 1 },
   fileFilter: (req, file, cb) => {
-    console.log(file);
     if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
       return cb(new appError("只接受jpg、jpeg、png格式的圖片", 400));
     }
@@ -25,7 +24,6 @@ const isValidObjectId = require("../validation").isValidObjectId;
 
 router.get("/", async (req, res, next) => {
   try {
-    console.log(req.query);
     if (Object.keys(req.query).length > 0) {
       //這裡需要搜尋特定條件
       let query = {};
@@ -116,7 +114,6 @@ router.post(
         .png()
         .toBuffer();
       rentalData.image = buffer;
-      console.log(rentalData);
       //驗證資料
       const { error } = validation.houseValidation(rentalData);
       if (error) return next(new appError(error.details[0].message, 400));
@@ -141,7 +138,6 @@ router.delete(
   passport.authenticate("jwt", { session: false }),
   async (req, res, next) => {
     try {
-      console.log(req.params);
       let { _id } = req.params;
       //檢驗是否為合法的id
       if (!isValidObjectId(_id)) {

@@ -26,19 +26,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-app.get("/", (req, res) => {
-  res.send("server is running");
-});
-
-app.get(
-  "/test",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    console.log(req);
-    res.send("test ok");
-  }
-);
-
 app.use("/api/user", authRouter);
 app.use("/api/rental", rentalRouter);
 
