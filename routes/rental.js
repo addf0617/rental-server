@@ -24,10 +24,13 @@ const isValidObjectId = require("../validation").isValidObjectId;
 
 router.get("/", async (req, res, next) => {
   try {
+    console.log(req.body);
+
     if (Object.keys(req.query).length > 0) {
       //這裡需要搜尋特定條件
       let query = {};
       let { type, maxPrice, District, ...other } = req.query;
+      console.log(req.query);
 
       if (type) query.type = type;
       if (maxPrice) query.price = { $lte: parseInt(maxPrice) };
@@ -35,14 +38,17 @@ router.get("/", async (req, res, next) => {
       if (Object.keys(other).length > 0)
         return next(new appError("請輸入正確的搜尋條件", 400));
 
-      let foundHouse = await House.find(query).select("-image");
+      let foundHouse = await House.find(query).select("-image").exec();
       if (foundHouse.length === 0) return next(new appError("找不到資料", 404));
       return res.send(foundHouse);
     } else {
       //搜尋所有房屋
+      console.log("正在搜尋所有房屋");
+
       let houses = await House.find()
         .select("-image")
-        .populate("landlord", ["username", "phoneNumber"]);
+        .populate("landlord", ["username", "phoneNumber"])
+        .exec();
       if (!houses || houses.length === 0)
         return next(new appError("找不到資料", 404));
       return res.send(houses);
@@ -74,11 +80,30 @@ router.get("/:_id", async (req, res, next) => {
     if (!isValidObjectId(_id)) {
       return next(new appError("請輸入正確格式的id", 400));
     }
-    let foundHouse = await House.findById(_id).populate("landlord", [
-      "username",
-      "phoneNumber",
-    ]);
+    let foundHouse = await House.findById(_id)
+      .populate("landlord", ["username", "phoneNumber"])
+      .exec();
     if (!foundHouse) return next(new appError("找不到資料", 404));
+    return res.send(foundHouse);
+  } catch (err) {
+    return next(new appError(err.message, 500));
+  }
+});
+
+//根據用戶id搜尋
+router.get("/user/:_id", async (req, res, next) => {
+  try {
+    let { _id } = req.params;
+    //檢驗id
+    if (!isValidObjectId(_id)) {
+      return next(new appError("請輸入正確格式的id", 400));
+    }
+    let foundHouse = await House.find({ landlord: _id })
+      .populate("landlord", ["username", "phoneNumber"])
+      .exec();
+    if (!foundHouse || foundHouse.length === 0) {
+      return next(new appError("找不到資料", 404));
+    }
     return res.send(foundHouse);
   } catch (err) {
     return next(new appError(err.message, 500));
@@ -91,7 +116,7 @@ router.get("/image/:_id", async (req, res, next) => {
     let { _id } = req.params;
     if (!isValidObjectId(_id))
       return next(new appError("請輸入正確格式的id", 400));
-    let foundImage = await House.findById(_id).select("image");
+    let foundImage = await House.findById(_id).select("image").exec();
     if (!foundImage) return next(new appError("找不到圖片資料", 404));
     res.set("content-type", "image/png");
     return res.send(foundImage.image);
@@ -122,7 +147,7 @@ router.post(
       await newRental.save();
 
       //房東增加出租房屋
-      let foundUser = await User.findById(req.user._id);
+      let foundUser = await User.findById(req.user._id).exec();
       foundUser.properties.push(newRental._id);
       await foundUser.save();
 
@@ -143,7 +168,7 @@ router.delete(
       if (!isValidObjectId(_id)) {
         return next(new appError("請輸入正確格式的id", 400));
       }
-      let foundHouses = await House.findById(_id);
+      let foundHouses = await House.findById(_id).exec();
       if (!foundHouses) return next(new appError("找不到資料", 404));
       //console.log(foundHouses.landlord == req.user._id); 這樣會顯示false
       if (foundHouses.landlord.equals(req.user._id)) {

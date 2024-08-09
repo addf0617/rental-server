@@ -8,4 +8,6 @@ JwtStrategy 設定大致完成
 將 login route 在登入成功時發送的 user 資料更改為 foundUser，將 index.js 中 app.all()中一條測試用 log 刪除
 刪除各個測試用 log
 
+新增根據用戶 id 搜尋房屋的 route；將從資料庫撈回的資料加上 exec()
+
 search route 完成，不過還有優化空間。

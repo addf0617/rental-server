@@ -14,7 +14,7 @@ router.post("/register", async (req, res, next) => {
   if (error) return next(new appError(error.details[0].message, 400));
   try {
     //檢查信箱是否已被註冊
-    const foundUser = await User.findOne({ email: userData.email });
+    const foundUser = await User.findOne({ email: userData.email }).exec();
     if (foundUser) return next(new appError("此信箱已被註冊", 400));
     const newUser = new User(userData);
     await newUser.save();
@@ -32,7 +32,7 @@ router.post("/login", async (req, res, next) => {
   if (error) return next(new appError(error.details[0].message, 400));
   try {
     //查詢使用者
-    const foundUser = await User.findOne({ email: userData.email });
+    const foundUser = await User.findOne({ email: userData.email }).exec();
     if (!foundUser) return next(new appError("此信箱尚未註冊", 400));
     //比對密碼
     foundUser.comparePassword(userData.password, (err, result) => {
