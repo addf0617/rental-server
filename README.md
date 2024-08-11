@@ -10,4 +10,6 @@ JwtStrategy 設定大致完成
 
 新增根據用戶 id 搜尋房屋的 route；將從資料庫撈回的資料加上 exec()
 
+更新註冊驗證，把 alphanum()拿掉，alphanum()會限定為字母數字，更新 rental post route 將圖片儲存時 resize 更改為橫向
+
 search route 完成，不過還有優化空間。

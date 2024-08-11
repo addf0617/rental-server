@@ -3,12 +3,7 @@ const ObjectId = require("mongoose").Types.ObjectId;
 
 const registerValidation = (data) => {
   const Schema = Joi.object({
-    username: Joi.string()
-      .alphanum()
-      .min(2)
-      .max(20)
-      .required()
-      .label("Username"),
+    username: Joi.string().min(2).max(20).required().label("Username"),
     email: Joi.string().email().min(5).max(30).required().label("Email"),
     password: Joi.string().min(5).max(50).required().label("Password"),
     phoneNumber: Joi.string().required().label("Phone Number"),

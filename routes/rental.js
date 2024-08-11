@@ -24,14 +24,12 @@ const isValidObjectId = require("../validation").isValidObjectId;
 
 router.get("/", async (req, res, next) => {
   try {
-    console.log(req.body);
-
     if (Object.keys(req.query).length > 0) {
       //這裡需要搜尋特定條件
       let query = {};
       let { type, maxPrice, District, ...other } = req.query;
       console.log(req.query);
-
+      //todo: 優化這裡
       if (type) query.type = type;
       if (maxPrice) query.price = { $lte: parseInt(maxPrice) };
       if (District) query.District = District;
@@ -43,8 +41,6 @@ router.get("/", async (req, res, next) => {
       return res.send(foundHouse);
     } else {
       //搜尋所有房屋
-      console.log("正在搜尋所有房屋");
-
       let houses = await House.find()
         .select("-image")
         .populate("landlord", ["username", "phoneNumber"])
@@ -57,21 +53,6 @@ router.get("/", async (req, res, next) => {
     return next(new appError(err.message, 500));
   }
 });
-
-/* router.get("/search", async (req, res, next) => {
-  try {
-    console.log("正在search");
-    let query = req.query;
-    console.log(query);
-    console.log(req.query);
-    let foundHouse = await House.find(req.query);
-    if (foundHouse.length === 0) return next(new appError("找不到資料", 404));
-    return res.send(foundHouse);
-    //根據條件搜尋
-  } catch (err) {
-    return next(new appError(err.message, 500));
-  }
-}); */
 
 router.get("/:_id", async (req, res, next) => {
   try {
@@ -135,7 +116,7 @@ router.post(
       //轉換圖片
       if (!req.file) return next(new appError("請上傳圖片", 400));
       let buffer = await sharp(req.file.buffer)
-        .resize({ width: 300, height: 500 })
+        .resize({ width: 600, height: 300 })
         .png()
         .toBuffer();
       rentalData.image = buffer;
