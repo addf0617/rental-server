@@ -11,10 +11,10 @@ const globalErrorHandler = require("./errorController");
 const authRouter = require("./routes/auth");
 const rentalRouter = require("./routes/rental");
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 8080;
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/rent")
+  .connect(process.env.MONGODB_CONNECTION)
   .then(() => {
     console.log("database connected");
   })
