@@ -28,7 +28,6 @@ router.get("/", async (req, res, next) => {
       //這裡需要搜尋特定條件
       let query = {};
       let { type, maxPrice, District, ...other } = req.query;
-      console.log(req.query);
       //todo: 優化這裡
       if (type) query.type = type;
       if (maxPrice) query.price = { $lte: parseInt(maxPrice) };
@@ -36,7 +35,10 @@ router.get("/", async (req, res, next) => {
       if (Object.keys(other).length > 0)
         return next(new appError("請輸入正確的搜尋條件", 400));
 
-      let foundHouse = await House.find(query).select("-image").exec();
+      let foundHouse = await House.find(query)
+        .select("-image")
+        .populate("landlord", ["username", "phoneNumber"])
+        .exec();
       if (foundHouse.length === 0) return next(new appError("找不到資料", 404));
       return res.send(foundHouse);
     } else {
